@@ -38,6 +38,7 @@ extern "C" {
 extern byte clockCam;
 extern byte contClock;
 extern byte idleCam;
+extern bool camerafinished;
 extern unsigned long amostra;
 extern unsigned long linhaBruta[128];
 extern unsigned long maiorValorAmostra;
@@ -87,6 +88,8 @@ void TimerInt1_OnInterrupt(void) {
 		clockCam = 0;
 		idleCam++;
 		if (idleCam >= 6) {
+			camerafinished = 1;
+			TimerInt1_Disable();
 			contClock = 0;
 			idleCam = 0;
 		}

@@ -59,17 +59,26 @@ unsigned long linhaBruta[128];
 unsigned long maiorValorAmostra = 0;
 unsigned long limiar;
 unsigned short linhaLimiada[128];
+bool camerafinished = 0;
 
-char asciiValor[7];
-/* VARIAVEIS GLOBAIS FIM */
-
-void delay() {
-	//int delay = 0;
-	int delay1 = 0;
-	//for (delay = 0; delay < 255; delay++) {
-	for (delay1 = 0; delay1 < 3; delay1++) {
+void delayUp(unsigned long num) {
+	unsigned long a = 0;
+	for (a = 0; a < num; a++) {
 	}
-	//}
+}
+
+void sendStringSerial(signed long value, unsigned long t_num) {
+	char asciiValor[9];
+	int aux = 0;
+	for (aux = 0; aux < 9; aux++) {
+		asciiValor[aux] = '\0';
+	} //limpa
+	itoa(value, asciiValor, 10);
+	for (aux = 0; asciiValor[aux] != '\0' && aux < 9; aux++) {
+		USART1_SendChar(asciiValor[aux]);
+		delayUp(t_num);
+	}
+
 }
 
 /*lint -save  -e970 Disable MISRA rule (6.3) checking. */
@@ -78,7 +87,7 @@ int main(void)
 {
 	/* Write your local variable definition here */
 	int cont = 0;
-	int aux = 0;
+	int i = 0;
 	for (cont = 0; cont < 128; cont++) {
 		linhaBruta[cont] = 0;
 	}
@@ -99,27 +108,23 @@ int main(void)
 		 else linhaLimiada[cont] = 0;
 		 }
 		 */
-		for (cont = 0; cont < 128; cont++) {
-			for (aux = 0; aux < 7; aux++) {
-				asciiValor[aux] = '\0';
-			} //limpa
-			itoa(linhaBruta[cont], asciiValor, 10);
-			for (aux = 0; asciiValor[aux] != '\0' && aux<7; aux++) {
-				USART1_SendChar(asciiValor[aux]);
-				delay();
+		if (camerafinished == 1) {
+			for (i = 0; i < 128; i++) {
+				sendStringSerial(linhaBruta[i], 1);
+				USART1_SendChar('\r');
+				delayUp(1);
 			}
-			/*USART1_SendChar('\n');
-			delay();*/
+			USART1_SendChar('X');
+			delayUp(1);
 			USART1_SendChar('\r');
-			delay();
-		}
+			delayUp(1);
+			for (i = 0; i < 128; i++) {
+				linhaBruta[i] = 0;
+			}
 
-		USART1_SendChar('X');
-		delay();
-		/*USART1_SendChar('\n');
-		delay();*/
-		USART1_SendChar('\r');
-		delay();
+			TimerInt1_Enable();
+			camerafinished = 0;
+		}
 	}
 
 	/*** Don't write any code pass this line, or it will be deleted during code generation. ***/
