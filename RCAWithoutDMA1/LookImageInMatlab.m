@@ -40,3 +40,5 @@ imshow(mat2gray(dados))
 
 fclose(s);
 delete(s);
+
+%dados(y,8:50)
