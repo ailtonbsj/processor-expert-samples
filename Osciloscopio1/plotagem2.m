@@ -1,4 +1,4 @@
-s = serial('COM3');
+s = serial('COM5');
 set(s,'Terminator','CR');
 fopen(s);
 while true
